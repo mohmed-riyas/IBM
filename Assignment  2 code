@@ -1,0 +1,55 @@
+void setup()
+{
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(13,OUTPUT);
+  pinMode(2,INPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4,INPUT);
+  Serial.begin(1000);
+}
+
+void loop()
+{
+  int a=digitalRead(4);
+  //Reads the motion in the room.
+  //------------------------------------------
+  if(a)
+  {
+    digitalWrite(11,HIGH);
+    //if moment is detected the light will glow for 5 minutes.
+    delay(5000);//5 minutes is taken as 5 seconds.
+    Serial.println("\n\nmotion in the room,lights is ON");
+  }
+  else
+  {
+    digitalWrite(11,LOW);
+  //if there is no motion after 5 minutes the light turns off .
+    Serial.println("\n\nNo motion,light is OFF");
+  }
+  //-------------------------------------------------------
+  digitalWrite(3,LOW);//no gen. of pulse of sound
+  digitalWrite(3,HIGH);//gen, of pulse of sound
+  delayMicroseconds(10);//10ms of sound pulse.
+  digitalWrite(3,LOW);//ultrasonic sensor is off.
+  float p=pulseIn(2,HIGH);//receives the reflected signal.
+  float d=(p*0.0343)/2;//calculate distance of the water level.
+  
+  if(d<3)
+  {
+    tone(13,200);//the water tank is full is indicated
+    //using a buzzer.
+    Serial.println("\n\nThe Water Tank is full");
+  }
+  else if (d>250)
+  {
+    digitalWrite(13,HIGH);//if the water tank is empty,yellow
+    //light gets on indicating tank is empty.
+    Serial.println("\n\nThe Water Tank is empty");
+  }
+  else
+  {
+    digitalWrite(13,LOW);//the water level is normal.
+    Serial.println("\n\nThere is  Water in the water Tank");
+  }
+}
